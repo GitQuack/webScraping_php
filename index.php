@@ -23,14 +23,8 @@
 <?php
  
 $dataPoints = array();
-// $y = getData();
-$y = rand(-1, 1) * 0.01;
+$y = 0;
 array_push($dataPoints, array("x" => 0, "y" => $y));
-// for($i = 1; $i < 2; $i++){
-// 	$y += rand(-1, 1) * 0.01; 
-//     // $y = getData();
-// 	array_push($dataPoints, array("x" => $i, "y" => $y));
-// }
  
 ?>
 
@@ -128,56 +122,86 @@ array_push($dataPoints, array("x" => 0, "y" => $y));
                             }]
                         });
                         chart.render();
-                        
-                        // var updateInterval = 1000;
-                        // setInterval(function () { updateChart() }, updateInterval);
-                        
-                        // var xValue = dataPoints.length;
-                        // var yValue = dataPoints[dataPoints.length - 1].y;
 
                         var yValue = dataPoints[dataPoints.length -1].y;
                         updateCount = 0;
-                        
+                        yValue += (Math.random() - 0.5) * 0.01;
                         var updateChart = function() {
                             yValue += (Math.random() - 0.5) * 0.01;
                             // yValue = <?php echo floatVal(getData())?>;
                             updateCount++;
-                            dataPoints.push({y: yValue });
+                            dataPoints.push({
+                                y: yValue, highlightEnabled: false
+                             });
                             // xValue++;
                             chart.options.title.text = "EUR / USD - Upd. " + updateCount;
                             chart.render();
                         };
 
-                        setInterval(function(){updateChart()},5000);
+                        setInterval(function(){updateChart()},1000);
                     }
                     </script>
                 </div>
             </div>
             <div class="derContent contContent">
                 <h1>EUR / USD</h1>  
-                <table class="tb">
-                    <tr>
-                        <td><h3>Date</h3></td>
-                        <td><h3>Value</h3></td>
-                    </tr>
-                    <tr class="targetable">
-                        <td>
-                            <?php
-                                echo('<h5>'. date("M, d, Y h:i:s"). '</h5>')
-                             ?>
-                        </td>
-                        <td class="symbol">
-                            <h5 id="symbolEUR"></h5>
-                        </td>
-                            
+                <table class="tb" id="tbl">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbdy">
+                        <tr class="targetable">
+                            <td><?php echo('<h5 id="dateEUR">'. date("M, d, Y h:i:s"). '</h5>')?></td>
+                            <td class="symbol"><h5 id="symbolEUR">None</h5></td>
+                            <script>
+                                document.getElementById('symbolEUR').innerHTML = <?php echo(getData())?>
+                            </script>
+                        </tr>
                         <script>
-                            document.getElementById("symbolEUR").innerHTML = <?php echo(getData())?>;    
-                            setTimeout(() => {
-                                document.getElementById("symbolEUR").innerHTML = <?php echo(getData())?>;    
-                                document.createElement('td');
-                            }, 5000);
+                            var contId = 0;
+                            start();
+                            function start(){
+                                setTimeout(() => {
+                                    var actDate = <?php echo json_encode(date("M, d, Y h:i:s")); ?>;
+                                    var actVal = <?php echo floatVal(getData()) ?>
+                                    rowCreate(actDate, actVal); 
+                                    start();
+                                }, 1000);
+                            }
+
+                            function rowCreate(datE, valuE) { 
+                                var tbl = document.getElementById('tbl');
+                                var tbdy = document.getElementById('tbdy');
+                                var tr = document.createElement('tr');
+                                tr.setAttribute('class','targetable');
+
+                                var tdDate = document.createElement('td');
+                                var tdVal = document.createElement('td');
+
+                                var h5Date = document.createElement('h5');
+                                h5Date.setAttribute('id','dateEUR'+contId);
+                                var h5Val = document.createElement('h5');
+                                h5Val.setAttribute('id','symbolEUR'+contId);
+
+                                h5Date.appendChild(document.createTextNode(datE));
+                                tdDate.appendChild(h5Date);
+
+                                h5Val.appendChild(document.createTextNode(valuE));
+                                tdVal.appendChild(h5Val);
+
+                                tr.appendChild(tdDate);
+                                tr.appendChild(tdVal);
+
+                                tbdy.appendChild(tr);
+                                var actData = '';
+                                var actVal = '';
+                                contId++;
+                            }
                         </script>
-                    </tr>
+                    </tbody>
                 </table>
             </div>
         </div>

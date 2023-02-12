@@ -46,6 +46,14 @@ body {
     align-items: center;
 }
 
+.dataHeader>h5 {
+    font-size: 70%;
+}
+
+.dataHeader>h3 {
+    font-size: 100%;
+}
+
 .dataHeader:hover{
     cursor: pointer;
     border-bottom: solid 1px;
@@ -100,6 +108,7 @@ body {
     padding-left: 5%;
     justify-content: start;
     align-items: center;
+    font-size: 100%;
 }
 
 .tb {
